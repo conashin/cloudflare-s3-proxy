@@ -1,2 +1,15 @@
-- name: Deploy to Cloudflare Workers with Wrangler
-  uses: cloudflare/wrangler-action@2.0.0
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  deploy:
+    name: Deploy
+    steps:
+      uses: cloudflare/wrangler-action@2.0.0
+      with:
+        apiKey: ${{ secrets.CF_API_KEY }}
+        email: ${{ secrets.CF_EMAIL }}
