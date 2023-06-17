@@ -1,13 +1,13 @@
+// @ts-nocheck
 //
 // Proxy Backblaze S3 compatible API requests, sending notifications to a webhook
 //
 // Adapted from https://github.com/obezuk/worker-signed-s3-template
 //
-import { AwsClient } from 'aws4fetch'
+import aws4fetch from 'aws4fetch';
 
 // Extract the region from the endpoint
-
-const endpointRegex = /^s3\.([a-zA-Z0-9-]+)\.backblazeb2\.com$/;
+const endpointRegex = /^s3\.([a-zA-Z0-9-]+)\.wasabisys\.com$/;
 const [ , aws_region] = AWS_S3_ENDPOINT.match(endpointRegex);
 
 const aws = new AwsClient({
@@ -148,31 +148,5 @@ async function handleRequest(event) {
 
     // Send the signed request to B2 and wait for the upstream response
     const response = await fetch(signedRequest);
-
-    if (WEBHOOK_URL) {
-        // Convert content length from a string to an integer
-        let contentLength = request.headers.get('content-length');
-        contentLength = contentLength ? parseInt(contentLength) : null;
-
-        // This will fire the fetch to the webhook asynchronously so the
-        // response is not delayed.
-        event.waitUntil(
-            fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    contentLength: contentLength,
-                    contentType: request.headers.get('content-type'),
-                    method: request.method,
-                    signatureTimestamp: request.headers.get('x-amz-date'),
-                    status: response.status,
-                    url: response.url
-                })
-            })
-        );        
-    }
-
     return response;
 }
