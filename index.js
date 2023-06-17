@@ -1,9 +1,3 @@
-// @ts-nocheck
-//
-// Proxy Backblaze S3 compatible API requests, sending notifications to a webhook
-//
-// Adapted from https://github.com/obezuk/worker-signed-s3-template
-//
 import aws4fetch from 'aws4fetch';
 
 // Extract the region from the endpoint
